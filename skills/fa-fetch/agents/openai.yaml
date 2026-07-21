@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feedback Analysis Fetched"
+  short_description: "Fetch and assess all PR feedback"
+  default_prompt: "Use $fa-fetch to fetch and assess feedback on the current pull request."

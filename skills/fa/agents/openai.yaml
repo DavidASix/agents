@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feedback Analysis Provided"
+  short_description: "Assess supplied pull-request feedback"
+  default_prompt: "Use $fa to assess this supplied pull-request feedback."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR Time"
+  short_description: "Publish a concise draft pull request"
+  default_prompt: "Use $pr-time to publish this branch as a draft pull request."

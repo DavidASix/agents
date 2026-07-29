@@ -1,0 +1,4 @@
+interface:
+  display_name: "Request Review"
+  short_description: "Request Copilot and Codex PR reviews"
+  default_prompt: "Use $rr to request Copilot and Codex reviews on the open pull request for the current branch."

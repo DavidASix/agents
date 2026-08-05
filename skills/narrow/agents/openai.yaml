@@ -1,0 +1,4 @@
+interface:
+  display_name: "Narrow Changes"
+  short_description: "Make only explicitly requested changes"
+  default_prompt: "Use $narrow to make only the explicitly requested change."

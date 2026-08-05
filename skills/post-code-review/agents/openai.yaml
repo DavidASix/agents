@@ -1,0 +1,4 @@
+interface:
+  display_name: "Post Code Review"
+  short_description: "Publish findings as inline PR comments"
+  default_prompt: "Use $post-code-review to publish these findings as one inline GitHub pull-request review."

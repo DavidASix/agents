@@ -15,6 +15,7 @@ from typing import NoReturn
 REPOSITORY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
 ALLOWED_EVENTS = ("COMMENT", "APPROVE", "REQUEST_CHANGES")
+ALLOWED_SESSION_PROVIDERS = ("codex", "claude")
 ALLOWED_COMMENT_KEYS = {
     "body",
     "line",
@@ -129,10 +130,30 @@ def validate_model(value: object) -> str:
     model = require_nonempty_string(value, "manifest.model").strip()
     if len(model) > 200 or not model.isprintable():
         fail("manifest.model must be a single printable line of at most 200 characters")
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]*", model):
+        fail("manifest.model must be a specific model identifier, such as gpt-5.6-sol")
     return model
 
 
-def load_manifest(path: Path) -> tuple[str, str, list[dict[str, object]]]:
+def validate_session_provider(value: object) -> str:
+    provider = require_nonempty_string(
+        value, "manifest.session_provider"
+    ).strip().lower()
+    if provider not in ALLOWED_SESSION_PROVIDERS:
+        fail("manifest.session_provider must be codex or claude")
+    return provider
+
+
+def validate_session_id(value: object) -> str:
+    session_id = require_nonempty_string(value, "manifest.session_id").strip()
+    if len(session_id) > 200 or not session_id.isprintable():
+        fail("manifest.session_id must be a single printable line of at most 200 characters")
+    return session_id
+
+
+def load_manifest(
+    path: Path,
+) -> tuple[str, str, str, str, list[dict[str, object]]]:
     try:
         raw_manifest: object = json.loads(path.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -143,11 +164,16 @@ def load_manifest(path: Path) -> tuple[str, str, list[dict[str, object]]]:
         fail(f"input file is not valid JSON: {error}")
 
     manifest = require_object(raw_manifest, "manifest")
-    unknown_keys = sorted(set(manifest) - {"body", "comments", "model"})
+    unknown_keys = sorted(
+        set(manifest)
+        - {"body", "comments", "model", "session_id", "session_provider"}
+    )
     if unknown_keys:
         fail(f"manifest contains unsupported keys: {', '.join(unknown_keys)}")
 
     model = validate_model(manifest.get("model"))
+    session_provider = validate_session_provider(manifest.get("session_provider"))
+    session_id = validate_session_id(manifest.get("session_id"))
     body = require_nonempty_string(manifest.get("body"), "manifest.body")
     raw_comments = manifest.get("comments")
     if not isinstance(raw_comments, list) or not raw_comments:
@@ -157,7 +183,7 @@ def load_manifest(path: Path) -> tuple[str, str, list[dict[str, object]]]:
         validate_comment(raw_comment, index)
         for index, raw_comment in enumerate(raw_comments)
     ]
-    return model, body, comments
+    return model, session_provider, session_id, body, comments
 
 
 def run_gh(arguments: list[str], input_text: str | None = None) -> str:
@@ -215,13 +241,22 @@ def main() -> None:
     if not SHA_PATTERN.fullmatch(arguments.head_sha):
         fail("--head-sha must be a full 40-character hexadecimal SHA")
 
-    model, body, comments = load_manifest(arguments.input)
-    review_body = f"AI-generated code review. Model used: {model}\n\n{body}"
+    model, session_provider, session_id, body, comments = load_manifest(arguments.input)
+    attributed_comments = [
+        {**comment, "body": f"Authored by AI:\n\n{comment['body']}"}
+        for comment in comments
+    ]
+    review_body = (
+        f"Review authored by AI.\n\n"
+        f"Model used: {model}\n\n"
+        f"{body}\n\n"
+        f"{session_provider.title()} session ID: {session_id}"
+    )
     payload: dict[str, object] = {
         "body": review_body,
         "commit_id": arguments.head_sha.lower(),
         "event": arguments.event,
-        "comments": comments,
+        "comments": attributed_comments,
     }
 
     if arguments.dry_run:
@@ -243,6 +278,8 @@ def main() -> None:
         "state": result.get("state"),
         "submitted_at": result.get("submitted_at"),
         "model": model,
+        "session_provider": session_provider,
+        "session_id": session_id,
         "comment_count": len(comments),
     }
     print(json.dumps(summary, indent=2, ensure_ascii=False))

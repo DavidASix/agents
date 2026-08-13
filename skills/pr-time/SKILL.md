@@ -1,6 +1,6 @@
 ---
 name: pr-time
-description: Publish an already-committed local Git branch as a GitHub draft pull request. Use when the user wants to push the current branch and open a draft PR with a concise informal description based on branch-only changes and the current branch name used verbatim as the PR title, without creating commits, running checks, invoking code-review workflows, or adding AI-authorship disclosures.
+description: Publish an already-committed local Git branch as a GitHub draft pull request. Use when the user wants to push the current branch and open a draft PR with a concise informal description based on branch-only changes and the current branch name used verbatim as the PR title, without creating commits, running checks, or invoking code-review workflows.
 ---
 
 # PR Time
@@ -15,9 +15,9 @@ Keep this workflow self-contained. Never invoke, load, or follow `post-code-revi
 2. Inspect `git status -sb` and the relevant diff. Assume the commits to publish already exist. Do not stage, commit, amend, or otherwise modify the worktree, and do not run linting, type checks, or tests.
 3. Require a non-default current branch. Use its name verbatim as the PR title—for example, `davidasix/my-feature`.
 4. Find the branch's parent from reflog evidence; do not use `git merge-base`. Inspect only commits and the diff in `<parent-branch>...HEAD` to write the PR description.
-5. Write the PR description in an informal, human-sounding voice with no buzzwords or flowery language. It must begin with exactly two sentences that describe the change, then a concise bullet list of the important changes. Do not mention AI authorship, a model or model identifier.
+5. Write the PR description in an informal, human-sounding voice with no buzzwords or flowery language. It must begin with exactly two sentences that describe the change, then a concise bullet list of the important changes.
 6. Push with tracking: `git push -u origin $(git branch --show-current)`.
-7. Open a draft PR using the description from step 5 as the body and the full current branch name as the title. Prefer the GitHub app's PR creation flow after deriving the repository from `origin`, the head from `git branch --show-current`, and the base from the user's request or the remote default branch. If needed, fall back to `gh pr create` with the same title and body.
+7. Open a draft PR using the description from step 5 as the body and the full current branch name as the title. Prefer the GitHub app's PR creation flow after deriving the repository from `origin`, the head from `git branch --show-current`, and the base from the user's request or the remote default branch. If needed, fall back to `gh pr create` with `--body-file` so real newlines are preserved; never embed a JSON-stringified body in the shell command.
 8. Return the PR URL, branch name, commit, base branch, and description.
 
 ## Safety

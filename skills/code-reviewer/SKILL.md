@@ -15,6 +15,8 @@ Act as a principal engineer conducting a thorough, constructive code review.
 4. Review tests as carefully as production code and identify meaningful coverage gaps.
 5. Verify suspected issues against the surrounding code before reporting them.
 
+Do not run integration tests as part of the review.
+
 ## Feedback
 
 - Lead with findings, ordered by severity.

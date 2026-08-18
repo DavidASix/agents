@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prototype"
+  short_description: "Build minimal proof-of-concept code changes"
+  default_prompt: "Use $prototype to implement this idea as a minimal, commented proof of concept without tests."

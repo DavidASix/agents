@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test It"
+  short_description: "Turn discussed behavior into a focused test"
+  default_prompt: "Use $test-it to turn the behavior we discussed into a focused test."

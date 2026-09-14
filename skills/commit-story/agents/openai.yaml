@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Story"
+  short_description: "Turn working changes into a coherent commit plan"
+  default_prompt: "Use $commit-story to analyze my uncommitted changes and propose a coherent atomic commit series."

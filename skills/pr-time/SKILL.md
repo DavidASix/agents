@@ -18,7 +18,8 @@ Keep this workflow self-contained. Never invoke, load, or follow `post-code-revi
 5. Write the PR description in an informal, human-sounding voice with no buzzwords or flowery language. It must begin with exactly two sentences that describe the change, then a concise bullet list of the important changes.
 6. Push with tracking: `git push -u origin $(git branch --show-current)`.
 7. Open a draft PR using the description from step 5 as the body and the full current branch name as the title. Prefer the GitHub app's PR creation flow after deriving the repository from `origin`, the head from `git branch --show-current`, and the base from the user's request or the remote default branch. If needed, fall back to `gh pr create` with `--body-file` so real newlines are preserved; never embed a JSON-stringified body in the shell command.
-8. Return the PR URL, branch name, commit, base branch, and description.
+8. Only when screenshots are necessary to explain or verify visual changes, capture them with `adb` for mobile apps or `agent-browser` for browser UIs, then upload them when posting to GitHub by passing [`--attach`](https://github.blog/changelog/2026-09-01-github-cli-media-in-issues-pull-requests-and-comments/) to the appropriate `gh` CLI command. Do not add screenshots for non-visual changes or when they do not materially improve the PR. Screenshots are temporary PR attachments and must never be staged, committed, or otherwise added to Git history.
+9. Return the PR URL, branch name, commit, base branch, and description.
 
 ## Safety
 
@@ -26,6 +27,7 @@ Keep this workflow self-contained. Never invoke, load, or follow `post-code-revi
 - Stop before pushing if the repository is not connected to an accessible GitHub remote.
 - Never conclude that GitHub credentials are invalid from a network-restricted authentication check.
 - Do not stage, commit, amend, or run checks as part of this skill.
+- Never add screenshots to Git history; upload necessary screenshots directly with `gh --attach`.
 - Never invoke `post-code-review`, its scripts, or any other code-review publishing workflow.
 - If the current branch is `main` then the command has been called mistakenly, and you MUST refuse to continue.
 - If pushing the branch to github would require a --force push then you MUST refuse to continue and wait for user resolution.

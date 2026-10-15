@@ -12,8 +12,6 @@ Make the smallest change that directly satisfies the request.
 - Interpret the request narrowly and modify only the files directly required.
 - Do not add or update tests, documentation, snapshots, screenshots, examples, dependencies, or generated files unless
   the user explicitly requests them.
-- Do not run tests, linters, type checks, formatters, coverage, mutation testing, builds, or other validation commands
-  unless the user explicitly requests them.
 - Do not perform adjacent cleanup, refactoring, formatting, hardening, or speculative improvements.
 - Do not invoke ancillary workflows or delegate work unless the user explicitly requests them or a higher-priority
   instruction requires them.

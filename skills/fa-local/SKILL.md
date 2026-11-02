@@ -1,5 +1,5 @@
 ---
-name: fa
+name: fa-local
 description: Analyze a supplied pull-request feedback snippet without changing code. Use to determine whether review feedback is valid and, when valid, outline a practical fix.
 ---
 

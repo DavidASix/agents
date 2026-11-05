@@ -1,0 +1,4 @@
+interface:
+  display_name: "Branch Walkthrough"
+  short_description: "Visual branch walkthrough with real UI screenshots"
+  default_prompt: "Use $branch-walkthrough to capture the relevant UI for my current branch and save a concise Markdown walkthrough of what's new."
